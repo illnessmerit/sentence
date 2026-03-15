@@ -62,7 +62,10 @@
     # https://github.com/NixOS/nixfmt/blob/5513ad83a6e8e203d76215ed17c9e0bccbe5b55c/README.md?plain=1#L169
     nixfmt.enable = true;
     prettier.enable = true;
-    stylua.enable = true;
+    stylua = {
+      enable = true;
+      excludes = [ "^lua" ];
+    };
     trailing-whitespace = {
       enable = true;
       # https://github.com/pre-commit/pre-commit-hooks/blob/5c514f85cc9be49324a6e3664e891ac2fc8a8609/.pre-commit-hooks.yaml#L205-L212
