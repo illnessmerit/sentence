@@ -34,6 +34,7 @@
   enterShell = ''
     hello         # Run scripts directly
     git --version # Use packages
+    sed "s|{{dir}}|$DEVENV_ROOT|g" template.lua > "$HOME"/.config/nvim/lua/plugins/sentence.lua
   '';
 
   # https://devenv.sh/tasks/
