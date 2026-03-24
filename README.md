@@ -38,7 +38,7 @@ Yeah. If there's no trailing whitespace after the sentence, `as` grabs the leadi
 
 No. If a line contains any non-whitespace character, then the last non-whitespace character on that line is a sentence end. This plays nice with soft wrapping for prose paragraphs and makes sure unpunctuated list items stay separate.
 
-A sentence can also end earlier within the same line. A `?` or `!` is a sentence end if it is followed by an optional `)`, `]`, `"` or `'`, and then whitespace.
+A sentence can also end earlier within the same line. This happens when a `?` or `!` is followed by an optional `)`, `]`, `"` or `'`, and then by whitespace. In that case, the sentence end is the last character before that whitespace.
 
 A `.` works the same way, except in two cases.
 
