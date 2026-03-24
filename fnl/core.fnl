@@ -4,7 +4,10 @@
   (let [hit [(string.find s pattern)]]
     (if (core.empty? hit)
         hits
-        (find-all* (string.sub s (core.inc (core.first hit))) pattern
+        (find-all* (->> hit
+                        core.first
+                        core.inc
+                        (string.sub s)) pattern
                    (core.concat hits
                                 [(core.map (if (core.empty? hits)
                                                core.identity
