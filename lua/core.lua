@@ -21,4 +21,7 @@ end
 local function find_all(s, pattern)
   return find_all_2a(s, pattern, {})
 end
+local function find_line_end(line)
+  return core.first({string.find(line, "%S%s*$")})
+end
 return {}

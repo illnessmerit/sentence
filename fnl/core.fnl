@@ -18,4 +18,7 @@
 (fn find-all [s pattern]
   (find-all* s pattern []))
 
+(fn find-line-end [line]
+  (core.first [(string.find line "%S%s*$")]))
+
 {}
