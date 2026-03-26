@@ -83,4 +83,7 @@ end
 local function difference(set_2a, ...)
   return reduce(disj, set_2a, keys(merge(...)))
 end
+local function conj(set_2a, element)
+  return merge(set_2a, __3eset({element}))
+end
 return {}

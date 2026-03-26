@@ -58,4 +58,7 @@
 (fn difference [set* ...]
   (reduce disj set* (keys (merge ...))))
 
+(fn conj [set* element]
+  (merge set* (->set [element])))
+
 {}
