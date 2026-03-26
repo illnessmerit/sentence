@@ -7,6 +7,7 @@ local empty_3f = _local_1_["empty?"]
 local first = _local_1_.first
 local identity = _local_1_.identity
 local inc = _local_1_.inc
+local keys = _local_1_.keys
 local last = _local_1_.last
 local map = _local_1_.map
 local mapcat = _local_1_.mapcat
@@ -39,11 +40,11 @@ end
 local function comp(...)
   local function _8_(f, g)
     if (nil == g) then
-      _G.error("Missing argument g on fnl/core.fnl:34", 2)
+      _G.error("Missing argument g on fnl/core.fnl:35", 2)
     else
     end
     if (nil == f) then
-      _G.error("Missing argument f on fnl/core.fnl:34", 2)
+      _G.error("Missing argument f on fnl/core.fnl:35", 2)
     else
     end
     local function _11_(...)
@@ -78,5 +79,8 @@ local function disj(set_2a, element)
   local set_2a_2a = merge(set_2a)
   set_2a_2a[element] = nil
   return set_2a_2a
+end
+local function difference(set_2a, ...)
+  return reduce(disj, set_2a, keys(merge(...)))
 end
 return {}

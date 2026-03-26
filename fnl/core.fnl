@@ -5,6 +5,7 @@
         : first
         : identity
         : inc
+        : keys
         : last
         : map
         : mapcat
@@ -53,5 +54,8 @@
   (let [set** (merge set*)]
     (tset set** element nil)
     set**))
+
+(fn difference [set* ...]
+  (reduce disj set* (keys (merge ...))))
 
 {}
