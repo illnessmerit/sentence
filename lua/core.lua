@@ -1,7 +1,9 @@
 -- [nfnl] fnl/core.fnl
 local _local_1_ = require("nfnl.core")
 local __3eset = _local_1_["->set"]
+local butlast = _local_1_.butlast
 local concat = _local_1_.concat
+local complement = _local_1_.complement
 local dec = _local_1_.dec
 local empty_3f = _local_1_["empty?"]
 local first = _local_1_.first
@@ -13,6 +15,7 @@ local map = _local_1_.map
 local mapcat = _local_1_.mapcat
 local merge = _local_1_.merge
 local reduce = _local_1_.reduce
+local rest = _local_1_.rest
 local sort = _local_1_.sort
 local function snoc(xs, x)
   return concat(xs, {x})
@@ -42,11 +45,11 @@ end
 local function comp(...)
   local function _4_(f, g)
     if (nil == g) then
-      _G.error("Missing argument g on fnl/core.fnl:37", 2)
+      _G.error("Missing argument g on fnl/core.fnl:40", 2)
     else
     end
     if (nil == f) then
-      _G.error("Missing argument f on fnl/core.fnl:37", 2)
+      _G.error("Missing argument f on fnl/core.fnl:40", 2)
     else
     end
     local function _7_(...)
@@ -93,5 +96,69 @@ local function find_sentence_ends(line)
 end
 local function cons(x, xs)
   return concat({x}, xs)
+end
+local function every_3f(f, xs)
+  if empty_3f(xs) then
+    return true
+  elseif f(first(xs)) then
+    return every_3f(f, rest(xs))
+  else
+    return false
+  end
+end
+local function zip_2a(xss, result)
+  if every_3f(complement(empty_3f), xss) then
+    return zip_2a(map(rest, xss), snoc(result, map(first, xss)))
+  else
+    return result
+  end
+end
+local function zip(...)
+  return zip_2a({...}, {})
+end
+local function apply(f, ...)
+  local args = {...}
+  return f(unpack(concat(butlast(args), last(args))))
+end
+local function juxt(...)
+  local fs = {...}
+  local function _12_(...)
+    local xs = {...}
+    if (nil == xs) then
+      _G.error("Missing argument xs on fnl/core.fnl:96", 2)
+    else
+    end
+    local function _14_(result, f)
+      if (nil == f) then
+        _G.error("Missing argument f on fnl/core.fnl:97", 2)
+      else
+      end
+      if (nil == result) then
+        _G.error("Missing argument result on fnl/core.fnl:97", 2)
+      else
+      end
+      return snoc(result, apply(f, xs))
+    end
+    return reduce(_14_, {}, fs)
+  end
+  return _12_
+end
+local function find_sentence_bounds(line)
+  local _18_
+  do
+    local partial_17_
+    local function _19_(_241)
+      return string.find(line, "%S", _241)
+    end
+    partial_17_ = comp(_19_, inc)
+    local function _20_(...)
+      return map(partial_17_, ...)
+    end
+    _18_ = _20_
+  end
+  local function _21_(...)
+    return cons(0, ...)
+  end
+  return apply(zip, juxt(comp(_18_, _21_, butlast), identity)(find_sentence_ends(line)))
 end
 return {}

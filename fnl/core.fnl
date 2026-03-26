@@ -1,5 +1,7 @@
 (local {: ->set
+        : butlast
         : concat
+        : complement
         : dec
         : empty?
         : first
@@ -11,6 +13,7 @@
         : mapcat
         : merge
         : reduce
+        : rest
         : sort} (require :nfnl.core))
 
 (fn snoc [xs x]
@@ -72,5 +75,31 @@
 
 (fn cons [x xs]
   (concat [x] xs))
+
+(fn every? [f xs]
+  (if (empty? xs) true
+      (f (first xs)) (every? f (rest xs))
+      false))
+
+(fn zip* [xss result]
+  (if (every? (complement empty?) xss)
+      (zip* (map rest xss) (snoc result (map first xss)))
+      result))
+
+(fn zip [...]
+  (zip* [...] []))
+
+(fn apply [f & args]
+  (f (unpack (concat (butlast args) (last args)))))
+
+(fn juxt [& fs]
+  (lambda [& xs]
+    (reduce (lambda [result f]
+              (snoc result (apply f xs))) [] fs)))
+
+(fn find-sentence-bounds [line]
+  (apply zip ((juxt (comp (partial map (comp #(string.find line "%S" $) inc))
+                          (partial cons 0) butlast)
+                    identity) (find-sentence-ends line))))
 
 {}
