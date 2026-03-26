@@ -1,4 +1,5 @@
 (local {: ->set
+        : butlast
         : concat
         : complement
         : dec
@@ -87,5 +88,10 @@
 
 (fn zip [...]
   (zip* [...] []))
+
+(fn juxt [& fs]
+  (lambda [& xs]
+    (reduce (lambda [result f]
+              (snoc result (f (unpack xs)))) [] fs)))
 
 {}

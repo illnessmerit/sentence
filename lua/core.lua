@@ -1,6 +1,7 @@
 -- [nfnl] fnl/core.fnl
 local _local_1_ = require("nfnl.core")
 local __3eset = _local_1_["->set"]
+local butlast = _local_1_.butlast
 local concat = _local_1_.concat
 local complement = _local_1_.complement
 local dec = _local_1_.dec
@@ -44,11 +45,11 @@ end
 local function comp(...)
   local function _4_(f, g)
     if (nil == g) then
-      _G.error("Missing argument g on fnl/core.fnl:39", 2)
+      _G.error("Missing argument g on fnl/core.fnl:40", 2)
     else
     end
     if (nil == f) then
-      _G.error("Missing argument f on fnl/core.fnl:39", 2)
+      _G.error("Missing argument f on fnl/core.fnl:40", 2)
     else
     end
     local function _7_(...)
@@ -114,5 +115,28 @@ local function zip_2a(xss, result)
 end
 local function zip(...)
   return zip_2a({...}, {})
+end
+local function juxt(...)
+  local fs = {...}
+  local function _12_(...)
+    local xs = {...}
+    if (nil == xs) then
+      _G.error("Missing argument xs on fnl/core.fnl:93", 2)
+    else
+    end
+    local function _14_(result, f)
+      if (nil == f) then
+        _G.error("Missing argument f on fnl/core.fnl:94", 2)
+      else
+      end
+      if (nil == result) then
+        _G.error("Missing argument result on fnl/core.fnl:94", 2)
+      else
+      end
+      return snoc(result, f(unpack(xs)))
+    end
+    return reduce(_14_, {}, fs)
+  end
+  return _12_
 end
 return {}
