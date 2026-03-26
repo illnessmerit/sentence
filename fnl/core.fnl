@@ -69,4 +69,7 @@
       keys
       sort))
 
+(fn cons [x xs]
+  (concat [x] xs))
+
 {}

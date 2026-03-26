@@ -90,4 +90,7 @@ end
 local function find_sentence_ends(line)
   return sort(keys(conj(difference(find_punctuated_ends(line), find_honorific_ends(line), find_list_item_ends(line)), find_line_end(line))))
 end
+local function cons(x, xs)
+  return concat({x}, xs)
+end
 return {}
