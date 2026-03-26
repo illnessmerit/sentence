@@ -10,20 +10,22 @@
         : map
         : mapcat
         : merge
-        : reduce} (require :nfnl.core))
+        : reduce
+        : sort} (require :nfnl.core))
+
+(fn snoc [xs x]
+  (concat xs [x]))
 
 (fn find-all* [s pattern hits]
-  (let [hit [(string.find s pattern)]]
+  (let [hit [(string.find s pattern
+                          (if (empty? hits) 0
+                              (-> hits
+                                  last
+                                  first
+                                  inc)))]]
     (if (empty? hit)
         hits
-        (find-all* (->> hit
-                        first
-                        inc
-                        (string.sub s)) pattern
-                   (concat hits [(map (if (empty? hits)
-                                          identity
-                                          (partial + (first (last hits))))
-                                      hit)])))))
+        (find-all* s pattern (snoc hits hit)))))
 
 (fn find-all [s pattern]
   (find-all* s pattern []))
@@ -62,7 +64,13 @@
   (merge set* (->set [element])))
 
 (fn find-sentence-ends [line]
-  (conj (difference (find-punctuated-ends line) (find-honorific-ends line)
-                    (find-list-item-ends line)) (find-line-end line)))
+  (-> (find-punctuated-ends line)
+      (difference (find-honorific-ends line) (find-list-item-ends line))
+      (conj (find-line-end line))
+      keys
+      sort))
+
+(fn cons [x xs]
+  (concat [x] xs))
 
 {}
