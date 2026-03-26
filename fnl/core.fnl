@@ -13,6 +13,9 @@
         : reduce
         : sort} (require :nfnl.core))
 
+(fn snoc [xs x]
+  (concat xs [x]))
+
 (fn find-all* [s pattern hits]
   (let [hit [(string.find s pattern
                           (if (empty? hits) 0
@@ -22,7 +25,7 @@
                                   inc)))]]
     (if (empty? hit)
         hits
-        (find-all* s pattern (concat hits [hit])))))
+        (find-all* s pattern (snoc hits hit)))))
 
 (fn find-all [s pattern]
   (find-all* s pattern []))
