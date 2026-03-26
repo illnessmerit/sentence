@@ -14,17 +14,13 @@
         : sort} (require :nfnl.core))
 
 (fn find-all* [s pattern hits]
-  (let [hit [(string.find s pattern)]]
+  (let [hit [(string.find s pattern
+                          (if (empty? hits)
+                              0
+                              (inc (first (last hits)))))]]
     (if (empty? hit)
         hits
-        (find-all* (->> hit
-                        first
-                        inc
-                        (string.sub s)) pattern
-                   (concat hits [(map (if (empty? hits)
-                                          identity
-                                          (partial + (first (last hits))))
-                                      hit)])))))
+        (find-all* s pattern (concat hits [hit])))))
 
 (fn find-all [s pattern]
   (find-all* s pattern []))

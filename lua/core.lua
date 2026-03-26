@@ -15,21 +15,19 @@ local merge = _local_1_.merge
 local reduce = _local_1_.reduce
 local sort = _local_1_.sort
 local function find_all_2a(s, pattern, hits)
-  local hit = {string.find(s, pattern)}
+  local hit
+  local function _2_()
+    if empty_3f(hits) then
+      return 0
+    else
+      return inc(first(last(hits)))
+    end
+  end
+  hit = {string.find(s, pattern, _2_())}
   if empty_3f(hit) then
     return hits
   else
-    local _2_
-    if empty_3f(hits) then
-      _2_ = identity
-    else
-      local partial_3_ = first(last(hits))
-      local function _5_(...)
-        return (partial_3_ + ...)
-      end
-      _2_ = _5_
-    end
-    return find_all_2a(string.sub(s, inc(first(hit))), pattern, concat(hits, {map(_2_, hit)}))
+    return find_all_2a(s, pattern, concat(hits, {hit}))
   end
 end
 local function find_all(s, pattern)
@@ -39,42 +37,42 @@ local function find_line_end(line)
   return first({string.find(line, "%S%s*$")})
 end
 local function comp(...)
-  local function _8_(f, g)
+  local function _4_(f, g)
     if (nil == g) then
-      _G.error("Missing argument g on fnl/core.fnl:36", 2)
+      _G.error("Missing argument g on fnl/core.fnl:32", 2)
     else
     end
     if (nil == f) then
-      _G.error("Missing argument f on fnl/core.fnl:36", 2)
+      _G.error("Missing argument f on fnl/core.fnl:32", 2)
     else
     end
-    local function _11_(...)
+    local function _7_(...)
       return f(g(...))
     end
-    return _11_
+    return _7_
   end
-  return reduce(_8_, identity, {...})
+  return reduce(_4_, identity, {...})
 end
 local function find_punctuated_ends(line)
   return __3eset(map(comp(dec, last), find_all(line, "[%.%?!][%)%]\"']*%s")))
 end
 local honorifics = {"Mr%.", "Dr%.", "Mrs%.", "Ms%."}
 local function find_honorific_ends(line)
-  local function _12_(_241)
+  local function _8_(_241)
     return map(last, find_all(line, _241))
   end
-  return __3eset(mapcat(_12_, honorifics))
+  return __3eset(mapcat(_8_, honorifics))
 end
 local function find_list_item_ends(line)
   local hit = {string.find(line, "^%s*%d+%.")}
-  local function _13_()
+  local function _9_()
     if empty_3f(hit) then
       return {}
     else
       return {last(hit)}
     end
   end
-  return __3eset(_13_())
+  return __3eset(_9_())
 end
 local function disj(set_2a, element)
   local set_2a_2a = merge(set_2a)
