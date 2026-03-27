@@ -32,4 +32,4 @@ Parameters:
 
 Return:
 
-(table|nil) If a sentence is found, `{row, start_col, end_col}` Otherwise, `nil`.
+(table|nil) If a sentence is found, `{row, start_col, end_col}`. Otherwise, `nil`.
