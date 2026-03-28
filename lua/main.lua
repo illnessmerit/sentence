@@ -2,8 +2,6 @@
 local _local_1_ = require("nfnl.core")
 local __3eset = _local_1_["->set"]
 local butlast = _local_1_.butlast
-local concat = _local_1_.concat
-local complement = _local_1_.complement
 local dec = _local_1_.dec
 local empty_3f = _local_1_["empty?"]
 local first = _local_1_.first
@@ -13,12 +11,16 @@ local keys = _local_1_.keys
 local last = _local_1_.last
 local map = _local_1_.map
 local mapcat = _local_1_.mapcat
-local merge = _local_1_.merge
-local reduce = _local_1_.reduce
-local rest = _local_1_.rest
 local sort = _local_1_.sort
 local _local_2_ = require("core")
+local apply = _local_2_.apply
+local comp = _local_2_.comp
+local conj = _local_2_.conj
+local cons = _local_2_.cons
+local difference = _local_2_.difference
+local juxt = _local_2_.juxt
 local snoc = _local_2_.snoc
+local zip = _local_2_.zip
 local function find_all_2a(s, pattern, hits)
   local hit
   local function _3_()
@@ -41,123 +43,46 @@ end
 local function find_line_end(line)
   return first({string.find(line, "%S%s*$")})
 end
-local function comp(...)
-  local function _5_(f, g)
-    if (nil == g) then
-      _G.error("Missing argument g on fnl/main.fnl:39", 2)
-    else
-    end
-    if (nil == f) then
-      _G.error("Missing argument f on fnl/main.fnl:39", 2)
-    else
-    end
-    local function _8_(...)
-      return f(g(...))
-    end
-    return _8_
-  end
-  return reduce(_5_, identity, {...})
-end
 local function find_punctuated_ends(line)
   return __3eset(map(comp(dec, last), find_all(line, "[%.%?!][%)%]\"']*%s")))
 end
 local honorifics = {"Mr%.", "Dr%.", "Mrs%.", "Ms%."}
 local function find_honorific_ends(line)
-  local function _9_(_241)
+  local function _5_(_241)
     return map(last, find_all(line, _241))
   end
-  return __3eset(mapcat(_9_, honorifics))
+  return __3eset(mapcat(_5_, honorifics))
 end
 local function find_list_item_ends(line)
   local hit = {string.find(line, "^%s*%d+%.")}
-  local function _10_()
+  local function _6_()
     if empty_3f(hit) then
       return {}
     else
       return {last(hit)}
     end
   end
-  return __3eset(_10_())
-end
-local function disj(set_2a, element)
-  local set_2a_2a = merge(set_2a)
-  set_2a_2a[element] = nil
-  return set_2a_2a
-end
-local function difference(set_2a, ...)
-  return reduce(disj, set_2a, keys(merge(...)))
-end
-local function conj(set_2a, element)
-  return merge(set_2a, __3eset({element}))
+  return __3eset(_6_())
 end
 local function find_sentence_ends(line)
   return sort(keys(conj(difference(find_punctuated_ends(line), find_honorific_ends(line), find_list_item_ends(line)), find_line_end(line))))
 end
-local function cons(x, xs)
-  return concat({x}, xs)
-end
-local function every_3f(f, xs)
-  if empty_3f(xs) then
-    return true
-  elseif f(first(xs)) then
-    return every_3f(f, rest(xs))
-  else
-    return false
-  end
-end
-local function zip_2a(xss, result)
-  if every_3f(complement(empty_3f), xss) then
-    return zip_2a(map(rest, xss), snoc(result, map(first, xss)))
-  else
-    return result
-  end
-end
-local function zip(...)
-  return zip_2a({...}, {})
-end
-local function apply(f, ...)
-  local args = {...}
-  return f(unpack(concat(butlast(args), last(args))))
-end
-local function juxt(...)
-  local fs = {...}
-  local function _13_(...)
-    local xs = {...}
-    if (nil == xs) then
-      _G.error("Missing argument xs on fnl/main.fnl:95", 2)
-    else
-    end
-    local function _15_(result, f)
-      if (nil == f) then
-        _G.error("Missing argument f on fnl/main.fnl:96", 2)
-      else
-      end
-      if (nil == result) then
-        _G.error("Missing argument result on fnl/main.fnl:96", 2)
-      else
-      end
-      return snoc(result, apply(f, xs))
-    end
-    return reduce(_15_, {}, fs)
-  end
-  return _13_
-end
 local function find_sentence_bounds(line)
-  local _19_
+  local _8_
   do
-    local partial_18_
-    local function _20_(_241)
+    local partial_7_
+    local function _9_(_241)
       return string.find(line, "%S", _241)
     end
-    partial_18_ = comp(dec, _20_, inc)
-    local function _21_(...)
-      return map(partial_18_, ...)
+    partial_7_ = comp(dec, _9_, inc)
+    local function _10_(...)
+      return map(partial_7_, ...)
     end
-    _19_ = _21_
+    _8_ = _10_
   end
-  local function _22_(...)
+  local function _11_(...)
     return cons(0, ...)
   end
-  return apply(zip, juxt(comp(_19_, _22_, butlast), identity)(find_sentence_ends(line)))
+  return apply(zip, juxt(comp(_8_, _11_, butlast), identity)(find_sentence_ends(line)))
 end
 return {}
