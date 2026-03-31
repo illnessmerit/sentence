@@ -12,6 +12,7 @@ devenv.local.yaml
 # sentence
 .clj-kondo
 .lsp
+rplugin
 
 # shadow-cljs
 node_modules/
