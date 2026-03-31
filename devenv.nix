@@ -18,9 +18,12 @@
 
   # https://devenv.sh/languages/
   # languages.rust.enable = true;
-  languages.javascript = {
-    enable = true;
-    npm.enable = true;
+  languages = {
+    clojure.enable = true;
+    javascript = {
+      enable = true;
+      npm.enable = true;
+    };
   };
 
   # https://devenv.sh/processes/
