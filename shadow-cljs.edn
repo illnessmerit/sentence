@@ -1,14 +1,6 @@
 ;; shadow-cljs configuration
-{:source-paths
- ["src/dev"
-  "src/main"
-  "src/test"]
-
- :dependencies
- []
-
- :builds
- {:main {:modules {:main {}}
+{:builds
+ {:main {:modules {:main {:exports {:default main/main}}}
 ; https://github.com/neovim/node-client/blob/14391c4de7f11fde8c9b87deeb831780622d3756/README.md?plain=1#L112
          :output-dir "rplugin/node/"
          :target :esm}}}
