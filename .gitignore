@@ -13,6 +13,7 @@ devenv.local.yaml
 .calva
 .clj-kondo
 .lsp
+.npm
 rplugin
 
 # shadow-cljs
