@@ -22,6 +22,9 @@
   [line]
   (.search line #"\S\s*$"))
 
+(defn find-punctuated-ends [line]
+  (set (map (comp dec dec last) (find-all line #"[.?!][)\]\"']*\s"))))
+
 (defn main
   [plugin]
   (reset! state plugin)
