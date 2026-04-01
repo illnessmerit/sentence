@@ -34,10 +34,10 @@
 
 (defn find-honorific-ends
   [line]
-  (apply sorted-set-by < (mapcat (comp (partial map (comp dec
-                                                          last))
-                                       (partial find-all line))
-                                 honorifics)))
+  (set (mapcat (comp (partial map (comp dec
+                                        last))
+                     (partial find-all line))
+               honorifics)))
 
 (defn main
   [plugin]
