@@ -36,6 +36,9 @@
   scripts.hello.exec = ''
     echo hello from $GREET
   '';
+  scripts.run.exec = ''
+    nvim +"lua vim.fn.Get()"
+  '';
 
   # https://devenv.sh/basics/
   enterShell = ''
