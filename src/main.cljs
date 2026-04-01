@@ -1,6 +1,7 @@
 (ns main
   (:require
-   [clojure.set :refer [difference]]))
+   [clojure.set :refer [difference]]
+   [clojure.string :refer [blank?]]))
 
 (def state
   (atom nil))
@@ -55,6 +56,23 @@
                     (find-honorific-ends line)
                     (find-list-item-ends line))
         (find-line-end line)))
+
+(def zip
+  (partial map vector))
+
+(defn search
+  [re s offset]
+  (+ offset (.search (subs s offset) re)))
+
+(defn find-sentence-bounds
+  [line]
+  (if (blank? line)
+    []
+    (let [ends (find-sentence-ends line)
+          ends* (cons 0 (drop-last ends))]
+      (zip (map (partial search #"\S" line)
+                ends*)
+           ends))))
 
 (defn main
   [plugin]
