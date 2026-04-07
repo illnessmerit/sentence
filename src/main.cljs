@@ -41,9 +41,8 @@
 
 (defn find-list-item-ends
   [line]
-  (let [query (js/RegExp. #"^\s*\d+\." "g")
-        hit (.exec query line)]
-    (if hit
+  (let [query (js/RegExp. #"^\s*\d+\." "g")]
+    (if (.exec query line)
       #{(dec (.-lastIndex query))}
       #{})))
 
@@ -65,10 +64,12 @@
   [line]
   (if (blank? line)
     []
-    (let [ends (find-sentence-ends line)
-          ends* (cons 0 (drop-last ends))]
-      (zip (map (partial search #"\S" line)
-                ends*)
+    (let [ends (find-sentence-ends line)]
+      (zip (->> ends
+                drop-last
+                (map inc)
+                (cons 0)
+                (map (partial search #"\S" line)))
            ends))))
 
 (defn main
