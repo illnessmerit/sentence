@@ -2,6 +2,7 @@
   (:require
    [clojure.set :refer [difference]]
    [clojure.string :refer [blank?]]
+   [com.rpl.specter :refer [FIRST transform]]
    [promesa.core :as promesa]))
 
 (defn snoc
@@ -80,8 +81,12 @@
   [plugin]
   (.registerFunction plugin "Get" (fn [args]
                                     (promesa/let [args* (js->clj args :keywordize-keys true)
-                                                  buffer (.-nvim.buffer plugin)]
-                                      (get* (merge {:buf (.-id buffer)}
+                                                  buffer (.-nvim.buffer plugin)
+                                                  window (.-nvim.window plugin)
+                                                  cursor (.-cursor window)]
+                                      (get* (merge {:buf (.-id buffer)
+                                                    :offset 0
+                                                    :pos (transform FIRST dec (js->clj cursor))}
                                                    (if (zero? (count args*))
                                                      {}
                                                      (first args*))))))))
