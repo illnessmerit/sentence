@@ -26,9 +26,9 @@ Parameters:
 
 - `buf` (integer?) Buffer handle (default: current buffer).
 
-- `pos` (table?) 0-based reference position as `{row, col}` (default: current cursor position).
-
 - `offset` (integer?) Sentence offset relative to the reference position (default: `0`).
+
+- `pos` (table?) 0-based reference position as `{row, col}` (default: current cursor position).
 
 Return:
 
