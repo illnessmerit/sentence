@@ -1,7 +1,8 @@
 (ns main
   (:require
    [clojure.set :refer [difference]]
-   [clojure.string :refer [blank?]]))
+   [clojure.string :refer [blank?]]
+   [promesa.core :as promesa]))
 
 (defn snoc
   [xs x]
@@ -72,6 +73,15 @@
                 (map (partial search #"\S" line)))
            ends))))
 
+(defn get*
+  [opts])
+
 (defn main
   [plugin]
-  (.registerFunction plugin "Get" (fn [])))
+  (.registerFunction plugin "Get" (fn [args]
+                                    (promesa/let [args* (js->clj args :keywordize-keys true)
+                                                  buffer (.-nvim.buffer plugin)]
+                                      (get* (merge {:buf (.-id buffer)}
+                                                   (if (zero? (count args*))
+                                                     {}
+                                                     (first args*))))))))
