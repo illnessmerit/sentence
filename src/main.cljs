@@ -77,7 +77,7 @@
 (defn get**
   [opts])
 
-(def state
+(defonce state
   (atom nil))
 
 (defn get*
