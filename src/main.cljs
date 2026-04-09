@@ -96,7 +96,7 @@
                                  find-sentence-bounds)]
           (if (<= (count bounds) offset*)
             (promesa/recur (inc row*) (- offset* (count bounds)))
-            (nth bounds offset*)))))))
+            (cons row* (nth bounds offset*))))))))
 
 (defn seek-backward
   [row offset]
@@ -113,7 +113,7 @@
                                find-sentence-bounds)]
         (if (<= (count bounds) offset*)
           (promesa/recur (dec row*) (- offset* (count bounds)))
-          (nth (reverse bounds) offset*))))))
+          (cons row* (nth (reverse bounds) offset*)))))))
 
 (defn get**
   [{:keys [offset pos]}]
@@ -125,10 +125,9 @@
                            first
                            find-sentence-bounds)
                 offset* (+ offset (count-bounds (last pos) bounds))]
-    (cons (first pos)
-          (cond (<= (count bounds) offset*) (seek-forward (inc (first pos)) (- offset* (count bounds)))
-                (< offset* 0) (seek-backward (dec (first pos)) (- 0 offset* (count bounds)))
-                :else (nth bounds offset*)))))
+    (cond (<= (count bounds) offset*) (seek-forward (inc (first pos)) (- offset* (count bounds)))
+          (< offset* 0) (seek-backward (dec (first pos)) (- 0 offset* (count bounds)))
+          :else (cons (first pos) (nth bounds offset*)))))
 
 (defn get*
   [args]
