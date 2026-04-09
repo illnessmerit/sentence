@@ -102,7 +102,7 @@
   [row offset]
   (promesa/loop [row* row
                  offset* offset]
-    (if (= -1 row*)
+    (if (neg? row*)
       nil
       (promesa/let [buffer (.-nvim.buffer @state)
                     lines (.getLines buffer (clj->js {:start row*
