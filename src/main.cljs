@@ -106,11 +106,9 @@
 (defn get*
   [args]
   (promesa/let [args* (js->clj args :keywordize-keys true)
-                buffer (.-nvim.buffer @state)
                 window (.-nvim.window @state)
                 cursor (.-cursor window)]
-    (get** (merge {:buf (.-id buffer)
-                   :offset 0
+    (get** (merge {:offset 0
                    :pos (transform FIRST dec (js->clj cursor))}
                   (if (zero? (count args*))
                     {}
