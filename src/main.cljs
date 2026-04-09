@@ -81,10 +81,10 @@
                      bounds)))
 
 (defn seek-forward
-  [n])
+  [row offset])
 
 (defn seek-backward
-  [n])
+  [row offset])
 
 (defn get**
   [{:keys [offset pos]}]
@@ -95,10 +95,10 @@
                            js->clj
                            first
                            find-sentence-bounds)
-                n (+ offset (count-bounds (last pos) bounds))]
-    (cond (<= (count bounds) n) (seek-forward (- n (count bounds)))
-          (< n 0) (seek-backward n)
-          :else (nth bounds n))))
+                offset* (+ offset (count-bounds (last pos) bounds))]
+    (cond (<= (count bounds) offset*) (seek-forward (inc (first pos)) (- offset* (count bounds)))
+          (< offset* 0) (seek-backward (dec (first pos)) offset*)
+          :else (nth bounds offset*))))
 
 (defn get*
   [args]
