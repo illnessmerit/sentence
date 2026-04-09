@@ -125,9 +125,10 @@
                            first
                            find-sentence-bounds)
                 offset* (+ offset (count-bounds (last pos) bounds))]
-    (cond (<= (count bounds) offset*) (seek-forward (inc (first pos)) (- offset* (count bounds)))
-          (< offset* 0) (seek-backward (dec (first pos)) (- 0 offset* (count bounds)))
-          :else (nth bounds offset*))))
+    (cons (first pos)
+          (cond (<= (count bounds) offset*) (seek-forward (inc (first pos)) (- offset* (count bounds)))
+                (< offset* 0) (seek-backward (dec (first pos)) (- 0 offset* (count bounds)))
+                :else (nth bounds offset*)))))
 
 (defn get*
   [args]
