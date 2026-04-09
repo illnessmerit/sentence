@@ -99,7 +99,21 @@
             (nth bounds offset*)))))))
 
 (defn seek-backward
-  [row offset])
+  [row offset]
+  (promesa/loop [row* row
+                 offset* offset]
+    (if (= -1 row*)
+      nil
+      (promesa/let [buffer (.-nvim.buffer @state)
+                    lines (.getLines buffer (clj->js {:start row*
+                                                      :end (inc row*)}))
+                    bounds (-> lines
+                               js->clj
+                               first
+                               find-sentence-bounds)]
+        (if (<= (count bounds) (- offset*))
+          (promesa/recur (dec row*) (+ offset* (count bounds)))
+          (nth (reverse bounds) offset*))))))
 
 (defn get**
   [{:keys [offset pos]}]
@@ -112,7 +126,7 @@
                            find-sentence-bounds)
                 offset* (+ offset (count-bounds (last pos) bounds))]
     (cond (<= (count bounds) offset*) (seek-forward (inc (first pos)) (- offset* (count bounds)))
-          (< offset* 0) (seek-backward (dec (first pos)) offset*)
+          (< offset* 0) (seek-backward (dec (first pos)) (+ offset* (count bounds)))
           :else (nth bounds offset*))))
 
 (defn get*
