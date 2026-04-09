@@ -74,6 +74,12 @@
 (defonce state
   (atom nil))
 
+(defn count-bounds
+  [column bounds]
+  (count (take-while (comp (partial > column)
+                           last)
+                     bounds)))
+
 (defn get**
   [opts]
   (promesa/let [buffer (.-nvim.buffer @state)
@@ -81,7 +87,13 @@
                                                   :end (-> opts
                                                            :pos
                                                            first
-                                                           inc)}))]))
+                                                           inc)}))]
+    (->> lines
+         js->clj
+         first
+         find-sentence-bounds
+         (count-bounds (last (:pos opts)))
+         (+ (:offset opts)))))
 
 (defn get*
   [args]
