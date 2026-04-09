@@ -74,11 +74,17 @@
                 (map (partial search #"\S" line)))
            ends))))
 
-(defn get**
-  [opts])
-
 (defonce state
   (atom nil))
+
+(defn get**
+  [opts]
+  (promesa/let [buffer (.-nvim.buffer @state)
+                lines (.getLines buffer (clj->js {:start (first (:pos opts))
+                                                  :end (-> opts
+                                                           :pos
+                                                           first
+                                                           inc)}))]))
 
 (defn get*
   [args]
