@@ -87,18 +87,15 @@
   [n])
 
 (defn get**
-  [opts]
+  [{:keys [offset pos]}]
   (promesa/let [buffer (.-nvim.buffer @state)
-                lines (.getLines buffer (clj->js {:start (first (:pos opts))
-                                                  :end (-> opts
-                                                           :pos
-                                                           first
-                                                           inc)}))
+                lines (.getLines buffer (clj->js {:start (first pos)
+                                                  :end (inc (first pos))}))
                 bounds (-> lines
                            js->clj
                            first
                            find-sentence-bounds)
-                n (+ (:offset opts) (count-bounds (last (:pos opts)) bounds))]
+                n (+ offset (count-bounds (last pos) bounds))]
     (cond (<= (count bounds) n) (seek-forward (- n (count bounds)))
           (< n 0) (seek-backward n)
           :else (nth bounds n))))
