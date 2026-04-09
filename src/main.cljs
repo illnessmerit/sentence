@@ -82,16 +82,21 @@
 
 (defn seek-forward
   [row offset]
-  (promesa/let [buffer (.-nvim.buffer @state)
-                lines (.getLines buffer (clj->js {:start row
-                                                  :end (inc row)}))
-                bounds (-> lines
-                           js->clj
-                           first
-                           find-sentence-bounds)]
-    (if (<= (count bounds) offset)
-      (promesa/recur (inc row) (- offset (count bounds)))
-      (nth bounds offset))))
+  (promesa/loop [row* row
+                 offset* offset]
+    (promesa/let [buffer (.-nvim.buffer @state)
+                  length (.-length buffer)]
+      (if (= length row*)
+        nil
+        (promesa/let [lines (.getLines buffer (clj->js {:start row*
+                                                        :end (inc row*)}))
+                      bounds (-> lines
+                                 js->clj
+                                 first
+                                 find-sentence-bounds)]
+          (if (<= (count bounds) offset*)
+            (promesa/recur (inc row*) (- offset* (count bounds)))
+            (nth bounds offset*)))))))
 
 (defn seek-backward
   [row offset])
