@@ -74,19 +74,26 @@
                 (map (partial search #"\S" line)))
            ends))))
 
-(defn get*
+(defn get**
   [opts])
+
+(def state
+  (atom nil))
+
+(defn get*
+  [args]
+  (promesa/let [args* (js->clj args :keywordize-keys true)
+                buffer (.-nvim.buffer @state)
+                window (.-nvim.window @state)
+                cursor (.-cursor window)]
+    (get** (merge {:buf (.-id buffer)
+                   :offset 0
+                   :pos (transform FIRST dec (js->clj cursor))}
+                  (if (zero? (count args*))
+                    {}
+                    (first args*))))))
 
 (defn main
   [plugin]
-  (.registerFunction plugin "Get" (fn [args]
-                                    (promesa/let [args* (js->clj args :keywordize-keys true)
-                                                  buffer (.-nvim.buffer plugin)
-                                                  window (.-nvim.window plugin)
-                                                  cursor (.-cursor window)]
-                                      (get* (merge {:buf (.-id buffer)
-                                                    :offset 0
-                                                    :pos (transform FIRST dec (js->clj cursor))}
-                                                   (if (zero? (count args*))
-                                                     {}
-                                                     (first args*))))))))
+  (reset! state plugin)
+  (.registerFunction plugin "Get" get*))
