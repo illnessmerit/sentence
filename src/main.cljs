@@ -22,12 +22,11 @@
 
 (defn find-line-end
   [line]
-  (.search line #"\S\s*$"))
+  (inc (.search line #"\S\s*$")))
 
 (defn find-punctuated-ends
   [line]
   (apply sorted-set-by < (map (comp dec
-                                    dec
                                     last)
                               (find-all line #"[.?!][)\]\"']*\s"))))
 
@@ -36,8 +35,7 @@
 
 (defn find-honorific-ends
   [line]
-  (set (mapcat (comp (partial map (comp dec
-                                        last))
+  (set (mapcat (comp (partial map last)
                      (partial find-all line))
                honorifics)))
 
@@ -45,7 +43,7 @@
   [line]
   (let [query (js/RegExp. #"^\s*\d+\." "g")]
     (if (.exec query line)
-      #{(dec (.-lastIndex query))}
+      #{(.-lastIndex query)}
       #{})))
 
 (defn find-sentence-ends
@@ -69,24 +67,56 @@
     (let [ends (find-sentence-ends line)]
       (zip (->> ends
                 drop-last
-                (map inc)
                 (cons 0)
                 (map (partial search #"\S" line)))
            ends))))
 
+(defonce state
+  (atom nil))
+
+(defn count-bounds
+  [column bounds]
+  (count (take-while (comp (partial > column)
+                           last)
+                     bounds)))
+
+(defn seek-forward
+  [n])
+
+(defn seek-backward
+  [n])
+
+(defn get**
+  [opts]
+  (promesa/let [buffer (.-nvim.buffer @state)
+                lines (.getLines buffer (clj->js {:start (first (:pos opts))
+                                                  :end (-> opts
+                                                           :pos
+                                                           first
+                                                           inc)}))
+                bounds (-> lines
+                           js->clj
+                           first
+                           find-sentence-bounds)
+                n (+ (:offset opts) (count-bounds (last (:pos opts)) bounds))]
+    (cond (<= (count bounds) n) (seek-forward (- n (count bounds)))
+          (< n 0) (seek-backward n)
+          :else (nth bounds n))))
+
 (defn get*
-  [opts])
+  [args]
+  (promesa/let [args* (js->clj args :keywordize-keys true)
+                buffer (.-nvim.buffer @state)
+                window (.-nvim.window @state)
+                cursor (.-cursor window)]
+    (get** (merge {:buf (.-id buffer)
+                   :offset 0
+                   :pos (transform FIRST dec (js->clj cursor))}
+                  (if (zero? (count args*))
+                    {}
+                    (first args*))))))
 
 (defn main
   [plugin]
-  (.registerFunction plugin "Get" (fn [args]
-                                    (promesa/let [args* (js->clj args :keywordize-keys true)
-                                                  buffer (.-nvim.buffer plugin)
-                                                  window (.-nvim.window plugin)
-                                                  cursor (.-cursor window)]
-                                      (get* (merge {:buf (.-id buffer)
-                                                    :offset 0
-                                                    :pos (transform FIRST dec (js->clj cursor))}
-                                                   (if (zero? (count args*))
-                                                     {}
-                                                     (first args*))))))))
+  (reset! state plugin)
+  (.registerFunction plugin "Get" get*))
