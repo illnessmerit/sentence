@@ -22,12 +22,11 @@
 
 (defn find-line-end
   [line]
-  (.search line #"\S\s*$"))
+  (inc (.search line #"\S\s*$")))
 
 (defn find-punctuated-ends
   [line]
   (apply sorted-set-by < (map (comp dec
-                                    dec
                                     last)
                               (find-all line #"[.?!][)\]\"']*\s"))))
 
@@ -36,8 +35,7 @@
 
 (defn find-honorific-ends
   [line]
-  (set (mapcat (comp (partial map (comp dec
-                                        last))
+  (set (mapcat (comp (partial map last)
                      (partial find-all line))
                honorifics)))
 
@@ -45,7 +43,7 @@
   [line]
   (let [query (js/RegExp. #"^\s*\d+\." "g")]
     (if (.exec query line)
-      #{(dec (.-lastIndex query))}
+      #{(.-lastIndex query)}
       #{})))
 
 (defn find-sentence-ends
@@ -69,7 +67,6 @@
     (let [ends (find-sentence-ends line)]
       (zip (->> ends
                 drop-last
-                (map inc)
                 (cons 0)
                 (map (partial search #"\S" line)))
            ends))))
