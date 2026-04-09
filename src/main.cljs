@@ -80,6 +80,12 @@
                            last)
                      bounds)))
 
+(defn seek-forward
+  [n])
+
+(defn seek-backward
+  [n])
+
 (defn get**
   [opts]
   (promesa/let [buffer (.-nvim.buffer @state)
@@ -87,13 +93,15 @@
                                                   :end (-> opts
                                                            :pos
                                                            first
-                                                           inc)}))]
-    (->> lines
-         js->clj
-         first
-         find-sentence-bounds
-         (count-bounds (last (:pos opts)))
-         (+ (:offset opts)))))
+                                                           inc)}))
+                bounds (-> lines
+                           js->clj
+                           first
+                           find-sentence-bounds)
+                n (+ (:offset opts) (count-bounds (last (:pos opts)) bounds))]
+    (cond (<= (count bounds) n) (seek-forward (- n (count bounds)))
+          (< n 0) (seek-backward n)
+          :else (nth bounds n))))
 
 (defn get*
   [args]
