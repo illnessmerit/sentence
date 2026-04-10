@@ -1,0 +1,1 @@
+vim.keymap.set({ "n", "o", "x" }, ")", vim.fn.MoveForward)

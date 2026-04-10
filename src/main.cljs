@@ -114,7 +114,7 @@
           (promesa/recur (dec row*) (- offset* (count bounds)))
           (cons row* (nth (reverse bounds) offset*)))))))
 
-(defn get**
+(defn get***
   [{:keys [offset pos]}]
   (promesa/let [bounds (find-sentence-bounds (first pos))
                 offset* (+ offset (count-bounds (last pos) bounds))]
@@ -122,18 +122,35 @@
           (< offset* 0) (seek-backward (dec (first pos)) (- 0 offset* (count bounds)))
           :else (cons (first pos) (nth bounds offset*)))))
 
+(defn get**
+  [opts]
+  (promesa/let [window (.-nvim.window @state)
+                cursor (.-cursor window)]
+    (get*** (merge {:offset 0
+                    :pos (transform FIRST dec (js->clj cursor))}
+                   opts))))
+
 (defn get*
   [args]
-  (promesa/let [args* (js->clj args :keywordize-keys true)
-                window (.-nvim.window @state)
-                cursor (.-cursor window)]
-    (get** (merge {:offset 0
-                   :pos (transform FIRST dec (js->clj cursor))}
-                  (if (zero? (count args*))
-                    {}
-                    (first args*))))))
+  (get** (let [args* (js->clj args :keywordize-keys true)]
+           (if (zero? (count args*))
+             {}
+             (first args*)))))
+
+(defn move-forward
+  []
+  (promesa/let [count* (.nvim.getVvar @state "count1")
+                bounds (get** {:offset count*})]
+    (when bounds
+      (promesa/let [window (.-nvim.window @state)]
+        (->> bounds
+             (take 2)
+             (transform FIRST inc)
+             clj->js
+             (set! (.-cursor window)))))))
 
 (defn main
   [plugin]
   (reset! state plugin)
-  (.registerFunction plugin "Get" get*))
+  (.registerFunction plugin "Get" get* (clj->js {:sync true}))
+  (.registerFunction plugin "MoveForward" move-forward (clj->js {:sync true})))
