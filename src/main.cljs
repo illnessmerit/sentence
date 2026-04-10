@@ -119,7 +119,7 @@
   (promesa/let [bounds (find-sentence-bounds (first pos))
                 offset* (+ offset (count-bounds (last pos) bounds))]
     (cond (<= (count bounds) offset*) (seek-forward (inc (first pos)) (- offset* (count bounds)))
-          (< offset* 0) (seek-backward (dec (first pos)) (- offset*))
+          (< offset* 0) (seek-backward (dec (first pos)) (dec (- offset*)))
           :else (cons (first pos) (nth bounds offset*)))))
 
 (defn get**
