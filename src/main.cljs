@@ -158,8 +158,19 @@
         (when fallback
           (jump fallback))))))
 
+(defn move-backward
+  []
+  (promesa/let [count* (.nvim.getVvar @state "count1")
+                target (get** {:offset (- count*)})]
+    (if target
+      (jump target)
+      (promesa/let [fallback (seek-forward 0 0)]
+        (when fallback
+          (jump fallback))))))
+
 (defn main
   [plugin]
   (reset! state plugin)
   (.registerFunction plugin "Get" get* (clj->js {:sync true}))
-  (.registerFunction plugin "MoveForward" move-forward (clj->js {:sync true})))
+  (.registerFunction plugin "MoveForward" move-forward (clj->js {:sync true}))
+  (.registerFunction plugin "MoveBackward" move-backward (clj->js {:sync true})))
