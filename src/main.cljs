@@ -137,17 +137,26 @@
              {}
              (first args*)))))
 
+(defn jump
+  [sentence]
+  (promesa/let [window (.-nvim.window @state)]
+    (->> sentence
+         (take 2)
+         (transform FIRST inc)
+         clj->js
+         (set! (.-cursor window)))))
+
 (defn move-forward
   []
   (promesa/let [count* (.nvim.getVvar @state "count1")
-                bounds (get** {:offset count*})]
-    (when bounds
-      (promesa/let [window (.-nvim.window @state)]
-        (->> bounds
-             (take 2)
-             (transform FIRST inc)
-             clj->js
-             (set! (.-cursor window)))))))
+                target (get** {:offset count*})]
+    (if target
+      (jump target)
+      (promesa/let [buffer (.-nvim.buffer @state)
+                    length (.-length buffer)
+                    fallback (seek-backward (dec length) 0)]
+        (when fallback
+          (jump fallback))))))
 
 (defn main
   [plugin]
