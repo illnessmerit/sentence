@@ -133,6 +133,18 @@
                     {}
                     (first args*))))))
 
+(defn move-forward
+  []
+  (promesa/let [count* (.nvim.getVvar @state "count1")
+                bounds (get* {:offset count*})]
+    (when bounds
+      (promesa/let [window (.-nvim.window @state)]
+        (->> bounds
+             (take 2)
+             (transform FIRST inc)
+             clj->js
+             (set! (.-cursor window)))))))
+
 (defn main
   [plugin]
   (reset! state plugin)
