@@ -152,5 +152,5 @@
 (defn main
   [plugin]
   (reset! state plugin)
-  (.registerFunction plugin "Get" get*)
+  (.registerFunction plugin "Get" get* (clj->js {:sync true}))
   (.registerFunction plugin "MoveForward" move-forward (clj->js {:sync true})))
