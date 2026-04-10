@@ -148,4 +148,5 @@
 (defn main
   [plugin]
   (reset! state plugin)
-  (.registerFunction plugin "Get" get*))
+  (.registerFunction plugin "Get" get*)
+  (.registerFunction plugin "MoveForward" move-forward))
