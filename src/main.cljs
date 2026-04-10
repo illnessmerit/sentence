@@ -119,7 +119,7 @@
   (promesa/let [bounds (find-sentence-bounds (first pos))
                 offset* (+ offset (count-bounds (last pos) bounds))]
     (cond (<= (count bounds) offset*) (seek-forward (inc (first pos)) (- offset* (count bounds)))
-          (< offset* 0) (seek-backward (dec (first pos)) (- 0 offset* (count bounds)))
+          (< offset* 0) (seek-backward (dec (first pos)) (dec (- offset*)))
           :else (cons (first pos) (nth bounds offset*)))))
 
 (defn get**
@@ -137,20 +137,40 @@
              {}
              (first args*)))))
 
+(defn jump
+  [sentence]
+  (promesa/let [window (.-nvim.window @state)]
+    (->> sentence
+         (take 2)
+         (transform FIRST inc)
+         clj->js
+         (set! (.-cursor window)))))
+
 (defn move-forward
   []
   (promesa/let [count* (.nvim.getVvar @state "count1")
-                bounds (get** {:offset count*})]
-    (when bounds
-      (promesa/let [window (.-nvim.window @state)]
-        (->> bounds
-             (take 2)
-             (transform FIRST inc)
-             clj->js
-             (set! (.-cursor window)))))))
+                target (get** {:offset count*})]
+    (if target
+      (jump target)
+      (promesa/let [buffer (.-nvim.buffer @state)
+                    length (.-length buffer)
+                    fallback (seek-backward (dec length) 0)]
+        (when fallback
+          (jump fallback))))))
+
+(defn move-backward
+  []
+  (promesa/let [count* (.nvim.getVvar @state "count1")
+                target (get** {:offset (- count*)})]
+    (if target
+      (jump target)
+      (promesa/let [fallback (seek-forward 0 0)]
+        (when fallback
+          (jump fallback))))))
 
 (defn main
   [plugin]
   (reset! state plugin)
   (.registerFunction plugin "Get" get* (clj->js {:sync true}))
-  (.registerFunction plugin "MoveForward" move-forward (clj->js {:sync true})))
+  (.registerFunction plugin "MoveForward" move-forward (clj->js {:sync true}))
+  (.registerFunction plugin "MoveBackward" move-backward (clj->js {:sync true})))
