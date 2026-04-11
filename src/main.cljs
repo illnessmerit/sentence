@@ -76,7 +76,7 @@
 
 (defn count-bounds
   [column bounds]
-  (count (take-while (comp (partial > column)
+  (count (take-while (comp (partial >= column)
                            last)
                      bounds)))
 
