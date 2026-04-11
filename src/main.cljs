@@ -168,9 +168,19 @@
         (when fallback
           (jump fallback))))))
 
+(defn ai
+  []
+  (promesa/let [sentence (get** {})]
+    (when sentence
+      (clj->js {:from {:line (inc (first sentence))
+                       :col (inc (second sentence))}
+                :to {:line (inc (first sentence))
+                     :col (last sentence)}}))))
+
 (defn main
   [plugin]
   (reset! state plugin)
+  (.registerFunction plugin "Ai" ai (clj->js {:sync true}))
   (.registerFunction plugin "Get" get* (clj->js {:sync true}))
   (.registerFunction plugin "MoveForward" move-forward (clj->js {:sync true}))
   (.registerFunction plugin "MoveBackward" move-backward (clj->js {:sync true})))

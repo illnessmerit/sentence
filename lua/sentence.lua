@@ -1,1 +1,3 @@
-return {}
+return {
+	ai = vim.fn.Ai,
+}
