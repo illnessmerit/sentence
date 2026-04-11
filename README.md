@@ -26,17 +26,17 @@
 1. Add this block to your `lazy.nvim` configuration:
 
    ```lua
-      {
-        "nvim-mini/mini.nvim",
-        config = function()
-          require("mini.ai").setup({
-            custom_textobjects = {
-              s = require("sentence").ai,
-            },
-          })
-        end,
-        dependencies = { "8ta4/sentence" },
-      }
+   {
+     "nvim-mini/mini.nvim",
+     config = function()
+       require("mini.ai").setup({
+         custom_textobjects = {
+           s = require("sentence").ai,
+         },
+       })
+     end,
+     dependencies = { "8ta4/sentence" },
+   }
    ```
 
 ## Usage
