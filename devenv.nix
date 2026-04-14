@@ -11,6 +11,7 @@
   packages = [
     pkgs.git
     pkgs.gitleaks
+    pkgs.neovim
     pkgs.nil
     pkgs.pre-commit
     pkgs.python313Packages.pre-commit-hooks
@@ -36,6 +37,7 @@
   scripts.hello.exec = ''
     echo hello from $GREET
   '';
+  scripts.release.exec = "shadow-cljs release main";
   scripts.run.exec = ''
     nvim +"lua vim.fn.Get()"
   '';
