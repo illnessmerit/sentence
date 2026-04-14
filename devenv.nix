@@ -11,6 +11,7 @@
   packages = [
     pkgs.git
     pkgs.gitleaks
+    pkgs.neovim
     pkgs.nil
     pkgs.pre-commit
     pkgs.python313Packages.pre-commit-hooks
