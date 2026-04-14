@@ -36,6 +36,7 @@
   scripts.hello.exec = ''
     echo hello from $GREET
   '';
+  scripts.release.exec = "shadow-cljs release main";
   scripts.run.exec = ''
     nvim +"lua vim.fn.Get()"
   '';
