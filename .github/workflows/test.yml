@@ -29,3 +29,4 @@ jobs:
         run: |
           hello
       - run: devenv shell release
+      - run: tar czf sentence.tar.gz rplugin/node
