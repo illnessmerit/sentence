@@ -30,3 +30,13 @@ jobs:
           hello
       - run: devenv shell release
       - run: tar czf sentence.tar.gz rplugin/node
+      # https://github.com/softprops/action-gh-release/blob/4dd30955cca228da305ffee6fbc3fc1f95d447c2/README.md?plain=1#L110-L114
+      - name: Release
+        uses: softprops/action-gh-release@v3
+        if: github.ref_type == 'tag'
+        with:
+          files: sentence.tar.gz
+
+# https://github.com/softprops/action-gh-release/blob/4dd30955cca228da305ffee6fbc3fc1f95d447c2/README.md?plain=1#L289-L290
+permissions:
+  contents: write
