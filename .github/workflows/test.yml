@@ -9,12 +9,12 @@ jobs:
   tests:
     strategy:
       matrix:
-        os: [macos-15, ubuntu-24.04]
+        os: [macos-15]
     runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
-      - uses: cachix/install-nix-action@1ca7d21a94afc7c957383a2d217460d980de4934 # v31
+      - uses: cachix/install-nix-action@616559265b40713947b9c190a8ff4b507b5df49b # v31
       - uses: cachix/cachix-action@3ba601ff5bbb07c7220846facfa2cd81eeee15a1 # v16
         with:
           name: devenv
@@ -29,3 +29,14 @@ jobs:
         run: |
           hello
       - run: devenv shell release
+      - run: tar czf sentence.tar.gz rplugin/node
+      # https://github.com/softprops/action-gh-release/blob/4dd30955cca228da305ffee6fbc3fc1f95d447c2/README.md?plain=1#L110-L114
+      - name: Release
+        uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda # v3
+        if: github.ref_type == 'tag'
+        with:
+          files: sentence.tar.gz
+
+# https://github.com/softprops/action-gh-release/blob/4dd30955cca228da305ffee6fbc3fc1f95d447c2/README.md?plain=1#L289-L290
+permissions:
+  contents: write
