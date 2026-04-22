@@ -35,7 +35,10 @@
          },
        })
      end,
-     dependencies = { "8ta4/sentence" },
+     dependencies = {
+      "8ta4/sentence",
+      build = "./install.sh",
+     },
    }
    ```
 
